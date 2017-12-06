@@ -1,0 +1,11 @@
+
+D                    = 
+CXX                  = g++
+CC                   = g++
+SHLIBLD              = g++
+LDFLAGS              = -lm -Wall -pedantic
+LIBS                 = 
+OBJDIR               = obj/
+OBJEXT               = o
+CXXFLAGS             = -c -std=gnu++11 -O3
+EXECUTABLE_NAME      = lx_mie

@@ -1,0 +1,59 @@
+#file with refractive indices
+input/single_refractive_index.dat
+
+#particle radius (microns)
+0.01
+
+#output filename
+output/cross_sections.dat
+
+#output format (cross section: CS, efficiencies: EF (default) )
+CS
+
+#compute phase function/Legendre series (No (default), phase function: PF, Legendre series: LS )
+PF
+
+#output filename for phase function/Legendre series
+output/phase_function.dat
+
+#cosine of phase function angles
+    0.9982
+    0.9907
+    0.9773
+    0.9579
+    0.9328
+    0.9021
+    0.8660
+    0.8246
+    0.7783
+    0.7273
+    0.6720
+    0.6126
+    0.5495
+    0.4831
+    0.4138
+    0.3420
+    0.2682
+    0.1927
+    0.1161
+    0.0388
+   -0.0388
+   -0.1161
+   -0.1927
+   -0.2682
+   -0.3420
+   -0.4138
+   -0.4831
+   -0.5495
+   -0.6126
+   -0.6720
+   -0.7273
+   -0.7783
+   -0.8246
+   -0.8660
+   -0.9021
+   -0.9328
+   -0.9579
+   -0.9773
+   -0.9907
+   -0.9982

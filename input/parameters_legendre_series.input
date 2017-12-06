@@ -1,0 +1,20 @@
+#file with refractive indices
+input/single_refractive_index.dat
+
+#particle radius (microns)
+0.01
+
+#output filename
+output/cross_sections.dat
+
+#output format (cross section: CS, efficiencies: EF (default) )
+CS
+
+#compute phase function/Legendre series (No (default), phase function: PF, Legendre series: LS )
+LS
+
+#output filename for phase function/Legendre series
+output/legendre_series.dat
+
+#Number of Legendre series terms
+30

@@ -1,0 +1,11 @@
+#file with refractive indices
+compilation/Cr.dat
+
+#particle radius (microns)
+10.0
+
+#output filename
+output/cross_sections.dat
+
+#output format (cross section: CS, efficiencies: EF (default) )
+CS
