@@ -28,7 +28,7 @@
 
 
 
-double const CONST_PI = 3.14159265358979323846;
+inline constexpr double CONST_PI = 3.14159265358979323846;
 
 
 bool readParameterFile(const std::string parameter_file, std::string &refractive_index_file, std::string &output_file, double &radius, bool& use_cross_sections,
@@ -42,7 +42,7 @@ bool readRefractiveIndex(const std::string file_name, std::vector<double> &wavel
 
 
 void writeOutputFile(const std::string file_name, const bool use_cross_sections, const double particle_radius,
-                     const std::vector<double> wavelengths,
+                     const std::vector<double>& wavelengths,
                      const std::vector<double>& q_ext, const std::vector<double>& q_abs,
                      const std::vector<double>& q_scat, const std::vector<double>& asymmetry_parameter);
 

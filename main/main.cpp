@@ -28,6 +28,7 @@
 #include <sstream>
 #include <complex>
 #include <cmath>
+#include <stdexcept>
 
 
 #include "main_auxiliary.h"
@@ -36,6 +37,12 @@
 
 int main(int argc, char *argv[])
 {
+  if (argc < 2)
+  {
+    std::cerr << "Usage: lx_mie <parameter_file>\n";
+    return 1;
+  }
+
   std::string parameter_file = argv[1];
 
   std::string refractive_index_file;
@@ -77,66 +84,73 @@ int main(int argc, char *argv[])
   phase_function.resize(nb_wavelengths);
 
 
-  //call the Mie code
-  if (!compute_phase_function)
-    for (size_t i=0; i<nb_wavelengths; ++i)
-    {
-      double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
-
-      lxmie::Mie(refractive_index[i], size_parameter, q_ext[i], q_scat[i], q_abs[i], asymmetry_parameter[i]);
-    }
-
-
-  if (compute_phase_function)
+  try
   {
-
-    if (use_legendre_series)
+    if (!compute_phase_function)
     {
-
-      for (size_t i=0; i<nb_wavelengths; ++i)
+      for (size_t i = 0; i < nb_wavelengths; ++i)
       {
         double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
 
-        phase_function[i].assign(nb_legendre_terms, 0);
+        auto r = lxmie::Mie(refractive_index[i], size_parameter);
 
-
-        lxmie::Mie(refractive_index[i], size_parameter, nb_legendre_terms,
-                   q_ext[i], q_scat[i], q_abs[i], asymmetry_parameter[i],
-                   phase_function[i]);
-
+        q_ext[i]              = r.q_ext;
+        q_scat[i]             = r.q_sca;
+        q_abs[i]              = r.q_abs;
+        asymmetry_parameter[i] = r.asymmetry_parameter;
       }
-
-
-      writeLegendreSeriesOutput(phase_function_output_file, wavelengths, phase_function);
-
-
     }
-    else
+
+    if (compute_phase_function)
     {
-
-      for (size_t i=0; i<nb_wavelengths; ++i)
+      if (use_legendre_series)
       {
-        double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
+        for (size_t i = 0; i < nb_wavelengths; ++i)
+        {
+          double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
 
-        phase_function[i].assign(phase_function_angles.size(), 0);
+          phase_function[i].assign(nb_legendre_terms, 0);
 
-        std::vector< std::complex<double> > s1(phase_function_angles.size(), std::complex<double>(0, 0));
-        std::vector< std::complex<double> > s2(phase_function_angles.size(), std::complex<double>(0, 0));
+          auto r = lxmie::Mie(refractive_index[i], size_parameter,
+                               nb_legendre_terms, phase_function[i]);
 
-        lxmie::Mie(refractive_index[i], size_parameter, phase_function_angles,
-                   q_ext[i], q_scat[i], q_abs[i], asymmetry_parameter[i],
-                   s1, s2);
+          q_ext[i]              = r.q_ext;
+          q_scat[i]             = r.q_sca;
+          q_abs[i]              = r.q_abs;
+          asymmetry_parameter[i] = r.asymmetry_parameter;
+        }
 
-        phase_function[i] = lxmie::phaseFunction(s1, s2, size_parameter, q_scat[i]);
-
+        writeLegendreSeriesOutput(phase_function_output_file, wavelengths, phase_function);
       }
+      else
+      {
+        for (size_t i = 0; i < nb_wavelengths; ++i)
+        {
+          double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
 
+          phase_function[i].assign(phase_function_angles.size(), 0);
 
-      writePhaseFunctionOutput(phase_function_output_file, wavelengths, phase_function_angles, phase_function);
+          std::vector< std::complex<double> > s1(phase_function_angles.size(), std::complex<double>(0, 0));
+          std::vector< std::complex<double> > s2(phase_function_angles.size(), std::complex<double>(0, 0));
 
+          auto r = lxmie::Mie(refractive_index[i], size_parameter, phase_function_angles, s1, s2);
+
+          q_ext[i]              = r.q_ext;
+          q_scat[i]             = r.q_sca;
+          q_abs[i]              = r.q_abs;
+          asymmetry_parameter[i] = r.asymmetry_parameter;
+
+          phase_function[i] = lxmie::phaseFunction(s1, s2, size_parameter, q_scat[i]);
+        }
+
+        writePhaseFunctionOutput(phase_function_output_file, wavelengths, phase_function_angles, phase_function);
+      }
     }
-
-
+  }
+  catch (const std::runtime_error& e)
+  {
+    std::cerr << "Mie calculation error: " << e.what() << "\n";
+    return 1;
   }
 
 
@@ -144,7 +158,7 @@ int main(int argc, char *argv[])
 
 
 
-  std::cout << "Model finished! :-) " << std::endl;
+  std::cout << "Model finished!\n";
 
   return 0;
 }

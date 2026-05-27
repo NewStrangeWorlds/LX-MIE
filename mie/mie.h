@@ -28,20 +28,32 @@
 
 namespace lxmie
 {
-  int Mie(const std::complex<double> refractive_index, const double size_parameter, const size_t nb_legendre_moments,
-          double& q_ext, double& q_sca, double& q_abs, double& asymmetry_parameter, std::vector<double>& legendre_moments);
 
-  int Mie(const std::complex<double> refractive_index, const double size_parameter, const std::vector<double>& angular_grid,
-          double& q_ext, double& q_sca, double& q_abs, double& asymmetry_parameter,
-          std::vector< std::complex<double> >& s1, std::vector< std::complex<double> >& s2);
-
-  int Mie(const std::complex<double> refractive_index, const double size_parameter,
-          double& q_ext, double& q_sca, double& q_abs, double& asymmetry_parameter);
+struct MieResult {
+  double q_ext;
+  double q_sca;
+  double q_abs;
+  double asymmetry_parameter;
+};
 
 
-  double phaseFunction(const std::complex<double> s1, const std::complex<double> s2, const double size_parameter, const double q_sca);
-  std::vector<double> phaseFunction(const std::vector< std::complex<double> >& s1, const std::vector< std::complex<double> >& s2,
-                                    const double size_parameter, const double q_sca);
+MieResult Mie(std::complex<double> refractive_index, double size_parameter);
+
+MieResult Mie(std::complex<double> refractive_index, double size_parameter,
+              std::size_t nb_legendre_moments, std::vector<double>& legendre_moments);
+
+MieResult Mie(std::complex<double> refractive_index, double size_parameter,
+              const std::vector<double>& angular_grid,
+              std::vector<std::complex<double>>& s1, std::vector<std::complex<double>>& s2);
+
+
+double phaseFunction(std::complex<double> s1, std::complex<double> s2,
+                     double size_parameter, double q_sca);
+
+std::vector<double> phaseFunction(const std::vector<std::complex<double>>& s1,
+                                  const std::vector<std::complex<double>>& s2,
+                                  double size_parameter, double q_sca);
+
 }
 
 #endif
