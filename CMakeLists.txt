@@ -15,3 +15,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
 add_subdirectory(src/mie)
 add_subdirectory(src/main)
+
+option(BUILD_PYTHON_BINDINGS "Build Python bindings via PyBind11" OFF)
+if(BUILD_PYTHON_BINDINGS OR SKBUILD)
+  add_subdirectory(src/python)
+endif()

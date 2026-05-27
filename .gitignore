@@ -3,5 +3,6 @@ lx_mie
 
 # build files from cmake
 build/*
+output/*
 CMakeFiles/*
 .vscode/
