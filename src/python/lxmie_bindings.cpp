@@ -80,7 +80,7 @@ PYBIND11_MODULE(lxmie, m)
       {
         py::gil_scoped_release release;
         #pragma omp parallel for schedule(dynamic)
-        for (std::size_t i = 0; i < N; ++i)
+        for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
         {
           if (error_flag) continue;
           try
@@ -129,7 +129,7 @@ PYBIND11_MODULE(lxmie, m)
       {
         py::gil_scoped_release release;
         #pragma omp parallel for schedule(dynamic)
-        for (std::size_t i = 0; i < N; ++i)
+        for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
         {
           if (error_flag) continue;
           try
@@ -180,7 +180,7 @@ PYBIND11_MODULE(lxmie, m)
       {
         py::gil_scoped_release release;
         #pragma omp parallel for schedule(dynamic)
-        for (std::size_t i = 0; i < N; ++i)
+        for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(N); ++i)
         {
           if (error_flag) continue;
           try
