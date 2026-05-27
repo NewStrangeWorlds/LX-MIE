@@ -23,6 +23,10 @@ build = "cp39-* cp310-* cp311-* cp312-* cp313-*"
 # that FindOpenMP succeeds with Apple Clang.
 # The semicolon-separated OpenMP_CXX_FLAGS value is a CMake list — each token
 # becomes a separate compiler flag.
+[tool.cibuildwheel.windows]
+# 32-bit Windows is not supported (no viable OpenMP, 2 GB memory limit).
+archs = ["AMD64"]
+
 [tool.cibuildwheel.macos]
 before-build = "brew install libomp || true"
 
