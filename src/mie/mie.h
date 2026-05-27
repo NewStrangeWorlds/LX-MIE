@@ -37,22 +37,34 @@ struct MieResult {
 };
 
 
-MieResult Mie(std::complex<double> refractive_index, double size_parameter);
+MieResult Mie(
+  std::complex<double> refractive_index, 
+  double size_parameter);
 
-MieResult Mie(std::complex<double> refractive_index, double size_parameter,
-              std::size_t nb_legendre_moments, std::vector<double>& legendre_moments);
+MieResult Mie(
+  std::complex<double> refractive_index, 
+  double size_parameter,
+  std::size_t nb_legendre_moments, 
+  std::vector<double>& legendre_moments);
 
-MieResult Mie(std::complex<double> refractive_index, double size_parameter,
-              const std::vector<double>& angular_grid,
-              std::vector<std::complex<double>>& s1, std::vector<std::complex<double>>& s2);
+MieResult Mie(
+  std::complex<double> refractive_index, 
+  double size_parameter,
+  const std::vector<double>& angular_grid,
+  std::vector<std::complex<double>>& s1, 
+  std::vector<std::complex<double>>& s2);
 
+double phaseFunction(
+  std::complex<double> s1, 
+  std::complex<double> s2,
+  double size_parameter, 
+  double q_sca);
 
-double phaseFunction(std::complex<double> s1, std::complex<double> s2,
-                     double size_parameter, double q_sca);
-
-std::vector<double> phaseFunction(const std::vector<std::complex<double>>& s1,
-                                  const std::vector<std::complex<double>>& s2,
-                                  double size_parameter, double q_sca);
+std::vector<double> phaseFunction(
+  const std::vector<std::complex<double>>& s1,
+  const std::vector<std::complex<double>>& s2,
+  double size_parameter, 
+  double q_sca);
 
 }
 

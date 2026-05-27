@@ -58,16 +58,27 @@ int main(int argc, char *argv[])
 
 
 
-  if (readParameterFile(parameter_file, refractive_index_file, output_file, particle_radius,
-                        use_cross_sections, compute_phase_function, use_legendre_series,
-                        phase_function_angles, nb_legendre_terms, phase_function_output_file) == false) return 1;
+  if (readParameterFile(
+    parameter_file, 
+    refractive_index_file, 
+    output_file, 
+    particle_radius,
+    use_cross_sections, 
+    compute_phase_function, 
+    use_legendre_series,
+    phase_function_angles, 
+    nb_legendre_terms, 
+    phase_function_output_file) == false) return 1;
 
 
 
   std::vector< std::complex<double> > refractive_index;
   std::vector<double> wavelengths;
 
-  if (readRefractiveIndex(refractive_index_file, wavelengths, refractive_index) == false) return 1;
+  if (readRefractiveIndex(
+    refractive_index_file, 
+    wavelengths, 
+    refractive_index) == false) return 1;
 
 
 
@@ -94,9 +105,9 @@ int main(int argc, char *argv[])
 
         auto r = lxmie::Mie(refractive_index[i], size_parameter);
 
-        q_ext[i]              = r.q_ext;
-        q_scat[i]             = r.q_sca;
-        q_abs[i]              = r.q_abs;
+        q_ext[i] = r.q_ext;
+        q_scat[i] = r.q_sca;
+        q_abs[i] = r.q_abs;
         asymmetry_parameter[i] = r.asymmetry_parameter;
       }
     }
@@ -111,16 +122,22 @@ int main(int argc, char *argv[])
 
           phase_function[i].assign(nb_legendre_terms, 0);
 
-          auto r = lxmie::Mie(refractive_index[i], size_parameter,
-                               nb_legendre_terms, phase_function[i]);
+          auto r = lxmie::Mie(
+            refractive_index[i], 
+            size_parameter,
+            nb_legendre_terms, 
+            phase_function[i]);
 
-          q_ext[i]              = r.q_ext;
-          q_scat[i]             = r.q_sca;
-          q_abs[i]              = r.q_abs;
+          q_ext[i] = r.q_ext;
+          q_scat[i] = r.q_sca;
+          q_abs[i] = r.q_abs;
           asymmetry_parameter[i] = r.asymmetry_parameter;
         }
 
-        writeLegendreSeriesOutput(phase_function_output_file, wavelengths, phase_function);
+        writeLegendreSeriesOutput(
+          phase_function_output_file,
+          wavelengths, 
+          phase_function);
       }
       else
       {
@@ -133,17 +150,30 @@ int main(int argc, char *argv[])
           std::vector< std::complex<double> > s1(phase_function_angles.size(), std::complex<double>(0, 0));
           std::vector< std::complex<double> > s2(phase_function_angles.size(), std::complex<double>(0, 0));
 
-          auto r = lxmie::Mie(refractive_index[i], size_parameter, phase_function_angles, s1, s2);
+          auto r = lxmie::Mie(
+            refractive_index[i], 
+            size_parameter, 
+            phase_function_angles, 
+            s1, 
+            s2);
 
-          q_ext[i]              = r.q_ext;
-          q_scat[i]             = r.q_sca;
-          q_abs[i]              = r.q_abs;
+          q_ext[i] = r.q_ext;
+          q_scat[i] = r.q_sca;
+          q_abs[i] = r.q_abs;
           asymmetry_parameter[i] = r.asymmetry_parameter;
 
-          phase_function[i] = lxmie::phaseFunction(s1, s2, size_parameter, q_scat[i]);
+          phase_function[i] = lxmie::phaseFunction(
+            s1, 
+            s2, 
+            size_parameter, 
+            q_scat[i]);
         }
 
-        writePhaseFunctionOutput(phase_function_output_file, wavelengths, phase_function_angles, phase_function);
+        writePhaseFunctionOutput(
+          phase_function_output_file, 
+          wavelengths, 
+          phase_function_angles, 
+          phase_function);
       }
     }
   }
@@ -154,9 +184,15 @@ int main(int argc, char *argv[])
   }
 
 
-  writeOutputFile(output_file, use_cross_sections, particle_radius, wavelengths, q_ext, q_abs, q_scat, asymmetry_parameter);
-
-
+  writeOutputFile(
+    output_file, 
+    use_cross_sections, 
+    particle_radius, 
+    wavelengths, 
+    q_ext, 
+    q_abs, 
+    q_scat, 
+    asymmetry_parameter);
 
   std::cout << "Model finished!\n";
 

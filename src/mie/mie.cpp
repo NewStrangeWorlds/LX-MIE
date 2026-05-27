@@ -52,7 +52,9 @@ T anCoeff(const std::size_t n, const double nu, const T& z)
 //Convergence is reached if two consecutive terms differ by less than "continued_fraction_epsilon"
 //Returns A_N
 //This is the version for a complex A_N
-std::complex<double> startingANcontinuedFractions(const std::size_t nb_mie_terms, const std::complex<double> mx)
+std::complex<double> startingANcontinuedFractions(
+  const std::size_t nb_mie_terms, 
+  const std::complex<double> mx)
 {
   const double nu = nb_mie_terms + 0.5;
 
@@ -141,8 +143,12 @@ double startingANcontinuedFractionsReal(const std::size_t nb_mie_terms, const do
 //Calculates the Mie coefficients a and b that are used for the construction of the Mie series, see Eq. 17
 //The required coefficients A_n are calculated via downward recursion, B_n and C_n by upward recursion
 //a and b are evaluated up to a number of "nb_mie_terms"
-void calcMieCoefficients(const std::size_t nb_mie_terms, const std::complex<double> refractive_index, const double size_parameter,
-                         std::vector<std::complex<double>>& mie_coeff_a, std::vector<std::complex<double>>& mie_coeff_b)
+void calcMieCoefficients(
+  const std::size_t nb_mie_terms, 
+  const std::complex<double> refractive_index, 
+  const double size_parameter,
+  std::vector<std::complex<double>>& mie_coeff_a, 
+  std::vector<std::complex<double>>& mie_coeff_b)
 {
   const double x = size_parameter;
   const std::complex<double> m = refractive_index;
@@ -197,10 +203,11 @@ void calcMieCoefficients(const std::size_t nb_mie_terms, const std::complex<doub
 
 //Calculates the Mie efficiencies, see Eq. 1
 //The absorption efficiency is calculated as the difference of the extinction and scattering efficiencies
-void calcMieEfficiencies(const double size_parameter,
-                         const std::vector<std::complex<double>>& mie_coeff_a,
-                         const std::vector<std::complex<double>>& mie_coeff_b,
-                         double& q_ext, double& q_sca, double& q_abs)
+void calcMieEfficiencies(
+  const double size_parameter,
+  const std::vector<std::complex<double>>& mie_coeff_a,
+  const std::vector<std::complex<double>>& mie_coeff_b,
+  double& q_ext, double& q_sca, double& q_abs)
 {
   q_ext = 0.0;
   q_sca = 0.0;
@@ -231,7 +238,8 @@ double calcAsymmetryParameter(const double q_sca, const double size_parameter,
   double g = 0.0;
 
   for (std::size_t n = 1; n < mie_coeff_a.size() - 1; ++n)
-    g += n * (n + 2.0) / (n + 1.0) * std::real(mie_coeff_a[n] * std::conj(mie_coeff_a[n+1]) + mie_coeff_b[n] * std::conj(mie_coeff_b[n+1]))
+    g += n * (n + 2.0) / (n + 1.0) 
+      * std::real(mie_coeff_a[n] * std::conj(mie_coeff_a[n+1]) + mie_coeff_b[n] * std::conj(mie_coeff_b[n+1]))
          + (2.0*n + 1.0) / (n * (n + 1.0)) * std::real(mie_coeff_a[n] * std::conj(mie_coeff_b[n]));
 
   return g * 4.0 / (size_parameter * size_parameter * q_sca);
@@ -244,7 +252,10 @@ double calcAsymmetryParameter(const double q_sca, const double size_parameter,
 //Instead of evaluating the Legendre polynomials directly, we employ upward recurrence relations
 //We here follow the notation of Wiscombe (1979)
 //Note: cos_theta is the cosine of the scattering angle, not the angle itself
-void calcAngularFunctions(const double cos_theta, std::vector<double>& pi_n, std::vector<double>& tau_n)
+void calcAngularFunctions(
+  const double cos_theta, 
+  std::vector<double>& pi_n, 
+  std::vector<double>& tau_n)
 {
   pi_n[0] = 0.0;
   pi_n[1] = 1.0;
@@ -274,10 +285,11 @@ void calcAngularFunctions(const double cos_theta, std::vector<double>& pi_n, std
 //The intensities/amplitudes can be used to calculate the scattering phase function (see Eq. 7)
 //See Wiscombe (1979) for the recurrence relations used below
 //Note: cos_theta is the cosine of the scattering angle, not the angle itself
-void calcScatteringAmplitudes(const double cos_theta,
-                              const std::vector<std::complex<double>>& mie_coeff_a,
-                              const std::vector<std::complex<double>>& mie_coeff_b,
-                              std::complex<double>& s_1, std::complex<double>& s_2)
+void calcScatteringAmplitudes(
+  const double cos_theta,
+  const std::vector<std::complex<double>>& mie_coeff_a,
+  const std::vector<std::complex<double>>& mie_coeff_b,
+  std::complex<double>& s_1, std::complex<double>& s_2)
 {
   std::vector<double> pi_n(mie_coeff_a.size(), 0.0);
   std::vector<double> tau_n(mie_coeff_a.size(), 0.0);
@@ -303,10 +315,11 @@ void calcScatteringAmplitudes(const double cos_theta,
 
 //Calculate the Mueller arrays D and C, required for the Legendre series of the phase function
 //This follows the procedure and notation of Dave (1988)
-void calcMuellerArrays(const std::vector<std::complex<double>>& mie_coeff_a,
-                       const std::vector<std::complex<double>>& mie_coeff_b,
-                       const std::size_t nb_mie_terms,
-                       std::vector<std::complex<double>>& C, std::vector<std::complex<double>>& D)
+void calcMuellerArrays(
+  const std::vector<std::complex<double>>& mie_coeff_a,
+  const std::vector<std::complex<double>>& mie_coeff_b,
+  const std::size_t nb_mie_terms,
+  std::vector<std::complex<double>>& C, std::vector<std::complex<double>>& D)
 {
   if (nb_mie_terms < 2)
     throw std::runtime_error("LX-MIE: nb_mie_terms must be >= 2 for Mueller array calculation");
@@ -348,10 +361,11 @@ void calcMuellerArrays(const std::vector<std::complex<double>>& mie_coeff_a,
 
 //Calculate the moments of the Legendre series of the phase function
 //It follows the procedure of Dave (1988)
-void calcLegendreMoments(const std::vector<std::complex<double>>& mie_coeff_a,
-                         const std::vector<std::complex<double>>& mie_coeff_b,
-                         const std::size_t nb_max_moments, const std::size_t nb_mie_terms,
-                         std::vector<double>& legendre_moments)
+void calcLegendreMoments(
+  const std::vector<std::complex<double>>& mie_coeff_a,
+  const std::vector<std::complex<double>>& mie_coeff_b,
+  const std::size_t nb_max_moments, const std::size_t nb_mie_terms,
+  std::vector<double>& legendre_moments)
 {
   std::vector<double> a_m(nb_mie_terms + 2);
   std::vector<double> b_i(nb_max_moments + 2);
@@ -432,7 +446,8 @@ void calcLegendreMoments(const std::vector<std::complex<double>>& mie_coeff_a,
 
 //Calculate the maximum number of terms in the Mie series
 //See Eq. 22
-std::size_t numberOfMieTerms(const double size_parameter)
+std::size_t numberOfMieTerms(
+  const double size_parameter)
 {
   return std::size_t(size_parameter + 4.3 * std::pow(size_parameter, 1.0/3.0) + 2);
 }
@@ -441,9 +456,11 @@ std::size_t numberOfMieTerms(const double size_parameter)
 
 
 //Internal helper: allocate coefficients, run the core calculation, and return a MieResult.
-static MieResult calcMie(const std::complex<double> m, const double x,
-                          std::vector<std::complex<double>>& a,
-                          std::vector<std::complex<double>>& b)
+static MieResult calcMie(
+  const std::complex<double> m, 
+  const double x,
+  std::vector<std::complex<double>>& a,
+  std::vector<std::complex<double>>& b)
 {
   const std::size_t N = numberOfMieTerms(x);
   a.assign(N + 1, {});
@@ -461,7 +478,9 @@ static MieResult calcMie(const std::complex<double> m, const double x,
 
 
 
-MieResult Mie(const std::complex<double> refractive_index, const double size_parameter)
+MieResult Mie(
+  const std::complex<double> refractive_index, 
+  const double size_parameter)
 {
   std::vector<std::complex<double>> a, b;
   return calcMie(refractive_index, size_parameter, a, b);
@@ -470,8 +489,11 @@ MieResult Mie(const std::complex<double> refractive_index, const double size_par
 
 
 
-MieResult Mie(const std::complex<double> refractive_index, const double size_parameter,
-              const std::size_t nb_legendre_moments, std::vector<double>& legendre_moments)
+MieResult Mie(
+  const std::complex<double> refractive_index, 
+  const double size_parameter,
+  const std::size_t nb_legendre_moments, 
+  std::vector<double>& legendre_moments)
 {
   std::vector<std::complex<double>> a, b;
   MieResult r = calcMie(refractive_index, size_parameter, a, b);
@@ -489,9 +511,12 @@ MieResult Mie(const std::complex<double> refractive_index, const double size_par
 
 
 
-MieResult Mie(const std::complex<double> refractive_index, const double size_parameter,
-              const std::vector<double>& angular_grid,
-              std::vector<std::complex<double>>& s1, std::vector<std::complex<double>>& s2)
+MieResult Mie(
+  const std::complex<double> refractive_index, 
+  const double size_parameter,
+  const std::vector<double>& angular_grid,
+  std::vector<std::complex<double>>& s1, 
+  std::vector<std::complex<double>>& s2)
 {
   std::vector<std::complex<double>> a, b;
   MieResult r = calcMie(refractive_index, size_parameter, a, b);
@@ -505,10 +530,13 @@ MieResult Mie(const std::complex<double> refractive_index, const double size_par
 
 
 
-//Returns the value of the scattering phase function for given (angular-dependent) scattering amplitudes
-//See Eq. 7
-double phaseFunction(const std::complex<double> s1, const std::complex<double> s2,
-                     const double size_parameter, const double q_sca)
+//Returns the value of the scattering phase function for given (angular-dependent) 
+//scattering amplitudes. See Eq. 7
+double phaseFunction(
+  const std::complex<double> s1, 
+  const std::complex<double> s2,
+  const double size_parameter, 
+  const double q_sca)
 {
   return 2.0 / (size_parameter * size_parameter) * (std::norm(s1) + std::norm(s2)) / q_sca;
 }
@@ -516,11 +544,13 @@ double phaseFunction(const std::complex<double> s1, const std::complex<double> s
 
 
 
-//Returns the values of the scattering phase function for different angles with given (angular-dependent) scattering amplitudes
-//See Eq. 7
-std::vector<double> phaseFunction(const std::vector<std::complex<double>>& s1,
-                                  const std::vector<std::complex<double>>& s2,
-                                  const double size_parameter, const double q_sca)
+//Returns the values of the scattering phase function for different 
+//angles with given (angular-dependent) scattering amplitudes. See Eq. 7
+std::vector<double> phaseFunction(
+  const std::vector<std::complex<double>>& s1,
+  const std::vector<std::complex<double>>& s2,
+  const double size_parameter, 
+  const double q_sca)
 {
   std::vector<double> phase_function(s1.size(), 0.0);
 

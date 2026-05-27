@@ -32,10 +32,15 @@
 
 
 //write results
-void writeOutputFile(const std::string file_name, const bool use_cross_sections, const double particle_radius,
-                     const std::vector<double>& wavelengths,
-                     const std::vector<double>& q_ext, const std::vector<double>& q_abs,
-                     const std::vector<double>& q_scat, const std::vector<double>& asymmetry_parameter)
+void writeOutputFile(
+  const std::string file_name, 
+  const bool use_cross_sections, 
+  const double particle_radius,
+  const std::vector<double>& wavelengths,
+  const std::vector<double>& q_ext, 
+  const std::vector<double>& q_abs,
+  const std::vector<double>& q_scat, 
+  const std::vector<double>& asymmetry_parameter)
 {
   std::fstream file(file_name.c_str(), std::ios::out);
 
@@ -82,12 +87,13 @@ void writeOutputFile(const std::string file_name, const bool use_cross_sections,
          << std::setw(16) << std::left << "asymmetry parameter" << "\n";
 
     for (size_t i=0; i<nb_wavelengths; i++)
-      file << std::setprecision(10) << std::scientific << wavelengths[i] << "\t"
-                                                       << 2.0 * CONST_PI * particle_radius / wavelengths[i] << "\t"
-                                                       << q_abs[i] << "\t"
-                                                       << q_scat[i] << "\t"
-                                                       << q_ext[i] << "\t"
-                                                       << asymmetry_parameter[i] << "\n";
+      file << std::setprecision(10) << std::scientific 
+           << wavelengths[i] << "\t"
+           << 2.0 * CONST_PI * particle_radius / wavelengths[i] << "\t"
+           << q_abs[i] << "\t"
+           << q_scat[i] << "\t"
+           << q_ext[i] << "\t"
+           << asymmetry_parameter[i] << "\n";
   }
 
 
@@ -95,8 +101,11 @@ void writeOutputFile(const std::string file_name, const bool use_cross_sections,
 }
 
 
-void writePhaseFunctionOutput(const std::string file_name, const std::vector<double>& wavelengths,
-                              const std::vector<double>& angles, const std::vector< std::vector<double> >& phase_function)
+void writePhaseFunctionOutput(
+  const std::string file_name, 
+  const std::vector<double>& wavelengths,
+  const std::vector<double>& angles, 
+  const std::vector< std::vector<double> >& phase_function)
 {
   std::fstream file(file_name.c_str(), std::ios::out);
 
@@ -132,8 +141,10 @@ void writePhaseFunctionOutput(const std::string file_name, const std::vector<dou
 
 
 
-void writeLegendreSeriesOutput(const std::string file_name, const std::vector<double>& wavelengths,
-                               const std::vector< std::vector<double> >& legendre_series)
+void writeLegendreSeriesOutput(
+  const std::string file_name, 
+  const std::vector<double>& wavelengths,
+  const std::vector< std::vector<double> >& legendre_series)
 {
   std::fstream file(file_name.c_str(), std::ios::out);
 

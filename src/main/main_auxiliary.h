@@ -31,26 +31,50 @@
 inline constexpr double CONST_PI = 3.14159265358979323846;
 
 
-bool readParameterFile(const std::string parameter_file, std::string &refractive_index_file, std::string &output_file, double &radius, bool& use_cross_sections,
-                       bool& compute_phase_function, bool& use_legendre_series, std::vector<double>& phase_function_angles, size_t& nb_legendre_terms,
-                       std::string& phase_function_output_file);
+bool readParameterFile(
+  const std::string parameter_file, 
+  std::string &refractive_index_file, 
+  std::string &output_file, 
+  double &radius, 
+  bool& use_cross_sections,
+  bool& compute_phase_function, 
+  bool& use_legendre_series, 
+  std::vector<double>& phase_function_angles, 
+  size_t& nb_legendre_terms,
+  std::string& phase_function_output_file);
 
-bool readPhaseFunctionParameter(std::fstream& file, const bool use_legendre_series, std::vector<double>& phase_angles, size_t& nb_legendre_terms,
-                                std::string& output_file);
+bool readPhaseFunctionParameter(
+  std::fstream& file, 
+  const bool use_legendre_series, 
+  std::vector<double>& phase_angles, 
+  size_t& nb_legendre_terms,
+  std::string& output_file);
 
-bool readRefractiveIndex(const std::string file_name, std::vector<double> &wavelengths, std::vector< std::complex<double> > &refractive_index);
+bool readRefractiveIndex(
+  const std::string file_name, 
+  std::vector<double> &wavelengths, 
+  std::vector< std::complex<double> > &refractive_index);
 
+void writeOutputFile(
+  const std::string file_name, 
+  const bool use_cross_sections, 
+  const double particle_radius,
+  const std::vector<double>& wavelengths,
+  const std::vector<double>& q_ext, 
+  const std::vector<double>& q_abs,
+  const std::vector<double>& q_scat, 
+  const std::vector<double>& asymmetry_parameter);
 
-void writeOutputFile(const std::string file_name, const bool use_cross_sections, const double particle_radius,
-                     const std::vector<double>& wavelengths,
-                     const std::vector<double>& q_ext, const std::vector<double>& q_abs,
-                     const std::vector<double>& q_scat, const std::vector<double>& asymmetry_parameter);
+void writePhaseFunctionOutput(
+  const std::string file_name, 
+  const std::vector<double>& wavelengths,
+  const std::vector<double>& angles, 
+  const std::vector< std::vector<double> >& phase_function);
 
-void writePhaseFunctionOutput(const std::string file_name, const std::vector<double>& wavelengths,
-                              const std::vector<double>& angles, const std::vector< std::vector<double> >& phase_function);
-
-void writeLegendreSeriesOutput(const std::string file_name, const std::vector<double>& wavelengths,
-                               const std::vector< std::vector<double> >& legendre_series);
+void writeLegendreSeriesOutput(
+  const std::string file_name, 
+  const std::vector<double>& wavelengths,
+  const std::vector< std::vector<double> >& legendre_series);
 
 
 #endif

@@ -32,8 +32,12 @@
 
 
 
-bool readPhaseFunctionParameter(std::fstream& file, const bool use_legendre_series, std::vector<double>& phase_angles, size_t& nb_legendre_terms,
-                                std::string& output_file)
+bool readPhaseFunctionParameter(
+  std::fstream& file, 
+  const bool use_legendre_series, 
+  std::vector<double>& phase_angles, 
+  size_t& nb_legendre_terms,
+  std::string& output_file)
 {
   std::string line;
 
@@ -87,9 +91,17 @@ bool readPhaseFunctionParameter(std::fstream& file, const bool use_legendre_seri
 
 
 
-bool readParameterFile(const std::string parameter_file, std::string &refractive_index_file, std::string &output_file, double &radius, bool& use_cross_sections,
-                       bool& compute_phase_function, bool& use_legendre_series, std::vector<double>& phase_function_angles, size_t& nb_legendre_terms,
-                       std::string& phase_function_output_file)
+bool readParameterFile(
+  const std::string parameter_file, 
+  std::string &refractive_index_file, 
+  std::string &output_file, 
+  double &radius, 
+  bool& use_cross_sections,
+  bool& compute_phase_function, 
+  bool& use_legendre_series, 
+  std::vector<double>& phase_function_angles, 
+  size_t& nb_legendre_terms,
+  std::string& phase_function_output_file)
 {
   std::fstream file(parameter_file.c_str(), std::ios::in);
 
@@ -149,7 +161,12 @@ bool readParameterFile(const std::string parameter_file, std::string &refractive
         use_legendre_series = false;
 
 
-      compute_phase_function = readPhaseFunctionParameter(file, use_legendre_series, phase_function_angles, nb_legendre_terms, phase_function_output_file);
+      compute_phase_function = readPhaseFunctionParameter(
+        file, 
+        use_legendre_series, 
+        phase_function_angles, 
+        nb_legendre_terms, 
+        phase_function_output_file);
 
       if (!compute_phase_function)
         std::cout << "Error reading the phase function/Legendre series parameters!\n";
@@ -196,7 +213,10 @@ bool readParameterFile(const std::string parameter_file, std::string &refractive
 
 
 
-bool readRefractiveIndex(const std::string file_name, std::vector<double> &wavelengths, std::vector< std::complex<double> > &refractive_index)
+bool readRefractiveIndex(
+  const std::string file_name, 
+  std::vector<double> &wavelengths, 
+  std::vector< std::complex<double> > &refractive_index)
 {
   std::fstream file(file_name.c_str(), std::ios::in);
 
