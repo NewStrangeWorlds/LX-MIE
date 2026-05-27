@@ -20,7 +20,6 @@ jobs:
       matrix:
         os:
           - ubuntu-latest   # Linux x86_64 (manylinux)
-          - macos-13        # macOS x86_64 (Intel)
           - macos-14        # macOS arm64  (Apple Silicon)
           - windows-latest  # Windows x86_64
 

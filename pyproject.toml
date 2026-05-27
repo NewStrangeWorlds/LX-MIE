@@ -27,4 +27,4 @@ build = "cp39-* cp310-* cp311-* cp312-* cp313-*"
 before-build = "brew install libomp || true"
 
 [tool.cibuildwheel.macos.environment]
-CMAKE_ARGS = "-DOpenMP_CXX_FLAGS=-Xpreprocessor;-fopenmp;-I$(brew --prefix libomp)/include -DOpenMP_CXX_LIB_NAMES=omp -DOpenMP_omp_LIBRARY=$(brew --prefix libomp)/lib/libomp.dylib"
+CMAKE_ARGS = "-DOpenMP_CXX_FLAGS=-Xpreprocessor;-fopenmp;-I$(brew --prefix libomp)/include -DOpenMP_CXX_LIB_NAMES=omp -DOpenMP_omp_LIBRARY=$(brew --prefix libomp)/lib/libomp.a"
