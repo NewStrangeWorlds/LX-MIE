@@ -2,6 +2,9 @@
 
 **Author:** Daniel Kitzmann
 
+[![PyPI version](https://img.shields.io/pypi/v/lxmie)](https://pypi.org/project/lxmie/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 LX-MIE is a Mie scattering code that computes:
 
 - Extinction, scattering, and absorption efficiencies (or cross sections)
