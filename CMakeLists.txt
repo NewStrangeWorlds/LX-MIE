@@ -13,5 +13,5 @@ add_compile_options(-Wall -pedantic)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
-add_subdirectory(mie)
-add_subdirectory(main)
+add_subdirectory(src/mie)
+add_subdirectory(src/main)
