@@ -156,7 +156,9 @@ void calcMieCoefficients(
 
   //First, calculate A_n via backward recursion
   //A_n(mx) is complex; A_n(x) is real — stored separately
-  std::vector<double> A_n_real(nb_mie_terms + 1);
+  //thread_local: reuse the allocation across calls from the same thread
+  static thread_local std::vector<double> A_n_real;
+  A_n_real.resize(nb_mie_terms + 1);
 
   mie_coeff_a.back() = startingANcontinuedFractions(nb_mie_terms, mx);
   A_n_real.back()    = startingANcontinuedFractionsReal(nb_mie_terms, x);
@@ -164,8 +166,10 @@ void calcMieCoefficients(
   //backward recursion
   for (std::size_t n = nb_mie_terms; n > 1; --n)
   {
-    mie_coeff_a[n-1] = double(n) / mx - 1.0 / (double(n) / mx + mie_coeff_a[n]);
-    A_n_real[n-1]    = double(n) / x  - 1.0 / (double(n) / x  + A_n_real[n]);
+    const auto r_mx = double(n) / mx;
+    const auto r_x  = double(n) / x;
+    mie_coeff_a[n-1] = r_mx - 1.0 / (r_mx + mie_coeff_a[n]);
+    A_n_real[n-1]    = r_x  - 1.0 / (r_x  + A_n_real[n]);
   }
 
 
@@ -190,8 +194,9 @@ void calcMieCoefficients(
     A_n  = mie_coeff_a[n];
     A_nr = A_n_real[n];
 
-    D_n = -double(n) / x + 1.0 / (double(n) / x - D_n);
-    C_n = C_n * (D_n + double(n) / x) / (A_nr + double(n) / x);
+    const double nx = double(n) / x;
+    D_n = -nx + 1.0 / (nx - D_n);
+    C_n = C_n * (D_n + nx) / (A_nr + nx);
 
     mie_coeff_a[n] = C_n * (A_n / m - A_nr) / (A_n / m - D_n);
     mie_coeff_b[n] = C_n * (A_n * m - A_nr) / (A_n * m - D_n);
@@ -235,12 +240,17 @@ double calcAsymmetryParameter(const double q_sca, const double size_parameter,
 {
   if (q_sca == 0.0) return 0.0;
 
+  // re(u * conj(v)) == u.real()*v.real() + u.imag()*v.imag()  (avoids computing imaginary part)
+  auto re_dot = [](const std::complex<double>& u, const std::complex<double>& v) noexcept {
+    return u.real()*v.real() + u.imag()*v.imag();
+  };
+
   double g = 0.0;
 
   for (std::size_t n = 1; n < mie_coeff_a.size() - 1; ++n)
-    g += n * (n + 2.0) / (n + 1.0) 
-      * std::real(mie_coeff_a[n] * std::conj(mie_coeff_a[n+1]) + mie_coeff_b[n] * std::conj(mie_coeff_b[n+1]))
-         + (2.0*n + 1.0) / (n * (n + 1.0)) * std::real(mie_coeff_a[n] * std::conj(mie_coeff_b[n]));
+    g += n * (n + 2.0) / (n + 1.0)
+      * (re_dot(mie_coeff_a[n], mie_coeff_a[n+1]) + re_dot(mie_coeff_b[n], mie_coeff_b[n+1]))
+         + (2.0*n + 1.0) / (n * (n + 1.0)) * re_dot(mie_coeff_a[n], mie_coeff_b[n]);
 
   return g * 4.0 / (size_parameter * size_parameter * q_sca);
 }
@@ -285,15 +295,14 @@ void calcAngularFunctions(
 //The intensities/amplitudes can be used to calculate the scattering phase function (see Eq. 7)
 //See Wiscombe (1979) for the recurrence relations used below
 //Note: cos_theta is the cosine of the scattering angle, not the angle itself
-void calcScatteringAmplitudes(
+//pi_n and tau_n are pre-allocated work buffers (size == mie_coeff_a.size()); reused across calls.
+static void calcScatteringAmplitudes(
   const double cos_theta,
   const std::vector<std::complex<double>>& mie_coeff_a,
   const std::vector<std::complex<double>>& mie_coeff_b,
-  std::complex<double>& s_1, std::complex<double>& s_2)
+  std::complex<double>& s_1, std::complex<double>& s_2,
+  std::vector<double>& pi_n, std::vector<double>& tau_n)
 {
-  std::vector<double> pi_n(mie_coeff_a.size(), 0.0);
-  std::vector<double> tau_n(mie_coeff_a.size(), 0.0);
-
   calcAngularFunctions(cos_theta, pi_n, tau_n);
 
   std::complex<double> s_plus(0.0, 0.0);
@@ -449,7 +458,7 @@ void calcLegendreMoments(
 std::size_t numberOfMieTerms(
   const double size_parameter)
 {
-  return std::size_t(size_parameter + 4.3 * std::pow(size_parameter, 1.0/3.0) + 2);
+  return std::size_t(size_parameter + 4.3 * std::cbrt(size_parameter) + 2);
 }
 
 
@@ -463,8 +472,9 @@ static MieResult calcMie(
   std::vector<std::complex<double>>& b)
 {
   const std::size_t N = numberOfMieTerms(x);
-  a.assign(N + 1, {});
-  b.assign(N + 1, {});
+  // No zeroing needed: every element [1..N] is explicitly written by calcMieCoefficients.
+  a.resize(N + 1);
+  b.resize(N + 1);
 
   calcMieCoefficients(N, m, x, a, b);
 
@@ -479,10 +489,10 @@ static MieResult calcMie(
 
 
 MieResult Mie(
-  const std::complex<double> refractive_index, 
+  const std::complex<double> refractive_index,
   const double size_parameter)
 {
-  std::vector<std::complex<double>> a, b;
+  thread_local std::vector<std::complex<double>> a, b;
   return calcMie(refractive_index, size_parameter, a, b);
 }
 
@@ -490,12 +500,12 @@ MieResult Mie(
 
 
 MieResult Mie(
-  const std::complex<double> refractive_index, 
+  const std::complex<double> refractive_index,
   const double size_parameter,
-  const std::size_t nb_legendre_moments, 
+  const std::size_t nb_legendre_moments,
   std::vector<double>& legendre_moments)
 {
-  std::vector<std::complex<double>> a, b;
+  thread_local std::vector<std::complex<double>> a, b;
   MieResult r = calcMie(refractive_index, size_parameter, a, b);
 
   const std::size_t N = a.size() - 1;
@@ -512,17 +522,22 @@ MieResult Mie(
 
 
 MieResult Mie(
-  const std::complex<double> refractive_index, 
+  const std::complex<double> refractive_index,
   const double size_parameter,
   const std::vector<double>& angular_grid,
-  std::vector<std::complex<double>>& s1, 
+  std::vector<std::complex<double>>& s1,
   std::vector<std::complex<double>>& s2)
 {
-  std::vector<std::complex<double>> a, b;
+  thread_local std::vector<std::complex<double>> a, b;
   MieResult r = calcMie(refractive_index, size_parameter, a, b);
 
+  // pi_n[0] and pi_n[1] are explicitly set by calcAngularFunctions before use;
+  // remaining elements are computed by recurrence — no zeroing needed.
+  thread_local std::vector<double> pi_n, tau_n;
+  pi_n.resize(a.size());
+  tau_n.resize(a.size());
   for (std::size_t i = 0; i < angular_grid.size(); ++i)
-    calcScatteringAmplitudes(angular_grid[i], a, b, s1[i], s2[i]);
+    calcScatteringAmplitudes(angular_grid[i], a, b, s1[i], s2[i], pi_n, tau_n);
 
   return r;
 }
