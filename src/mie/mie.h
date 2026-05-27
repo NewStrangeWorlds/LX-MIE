@@ -1,6 +1,6 @@
 /*
-* This file is part of the LX-MIE code (https://github.com/exoclime).
-* Copyright (C) 2017 Daniel Kitzmann
+* This file is part of the LX-MIE code (https://github.com/newstrangeworlds).
+* Copyright (C) 2026 Daniel Kitzmann
 *
 * LX-MIE is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
