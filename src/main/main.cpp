@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
   if (!compute_phase_function)
   {
     #pragma omp parallel for schedule(dynamic)
-    for (size_t i = 0; i < nb_wavelengths; ++i)
+    for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(nb_wavelengths); ++i)
     {
       if (error_flag) continue;
       try
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
     if (use_legendre_series)
     {
       #pragma omp parallel for schedule(dynamic)
-      for (size_t i = 0; i < nb_wavelengths; ++i)
+      for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(nb_wavelengths); ++i)
       {
         if (error_flag) continue;
         try
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
     else
     {
       #pragma omp parallel for schedule(dynamic)
-      for (size_t i = 0; i < nb_wavelengths; ++i)
+      for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(nb_wavelengths); ++i)
       {
         if (error_flag) continue;
         try
