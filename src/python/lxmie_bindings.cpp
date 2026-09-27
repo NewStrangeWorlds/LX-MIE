@@ -22,6 +22,7 @@
 #include <pybind11/stl.h>
 
 #include <atomic>
+#include <cmath>
 #include <stdexcept>
 #include <string>
 
@@ -33,6 +34,14 @@
 
 namespace py = pybind11;
 using cd = std::complex<double>;
+
+
+//LX-MIE internally uses a negative imaginary part of the refractive index,
+//so the sign is enforced here to accept either convention (n + ik or n - ik)
+inline cd refractiveIndex(const double n_real, const double n_imag)
+{
+  return cd(n_real, -std::abs(n_imag));
+}
 
 
 PYBIND11_MODULE(lxmie, m)
@@ -64,7 +73,7 @@ PYBIND11_MODULE(lxmie, m)
 
   m.def("mie",
     [](double n_real, double n_imag, double x) {
-      return lxmie::Mie(cd(n_real, n_imag), x);
+      return lxmie::Mie(refractiveIndex(n_real, n_imag), x);
     },
     py::arg("n_real"), py::arg("n_imag"), py::arg("size_parameter"),
     "Compute Mie efficiencies and asymmetry parameter for a single particle.");
@@ -85,7 +94,7 @@ PYBIND11_MODULE(lxmie, m)
           if (error_flag) continue;
           try
           {
-            results[i] = lxmie::Mie(cd(n_real[i], n_imag[i]), size_params[i]);
+            results[i] = lxmie::Mie(refractiveIndex(n_real[i], n_imag[i]), size_params[i]);
           }
           catch (const std::runtime_error& e)
           {
@@ -110,7 +119,7 @@ PYBIND11_MODULE(lxmie, m)
   m.def("mie_legendre",
     [](double n_real, double n_imag, double x, std::size_t nb_moments) {
       std::vector<double> moments(nb_moments, 0.0);
-      auto r = lxmie::Mie(cd(n_real, n_imag), x, nb_moments, moments);
+      auto r = lxmie::Mie(refractiveIndex(n_real, n_imag), x, nb_moments, moments);
       return py::make_tuple(r, moments);
     },
     py::arg("n_real"), py::arg("n_imag"), py::arg("size_parameter"), py::arg("nb_moments"),
@@ -136,7 +145,7 @@ PYBIND11_MODULE(lxmie, m)
           {
             all_moments[i].assign(nb_moments, 0.0);
             results[i] = lxmie::Mie(
-              cd(n_real[i], n_imag[i]), size_params[i], nb_moments, all_moments[i]);
+              refractiveIndex(n_real[i], n_imag[i]), size_params[i], nb_moments, all_moments[i]);
           }
           catch (const std::runtime_error& e)
           {
@@ -161,7 +170,7 @@ PYBIND11_MODULE(lxmie, m)
   m.def("mie_amplitudes",
     [](double n_real, double n_imag, double x, const std::vector<double>& angles) {
       std::vector<cd> s1(angles.size()), s2(angles.size());
-      auto r = lxmie::Mie(cd(n_real, n_imag), x, angles, s1, s2);
+      auto r = lxmie::Mie(refractiveIndex(n_real, n_imag), x, angles, s1, s2);
       return py::make_tuple(r, s1, s2);
     },
     py::arg("n_real"), py::arg("n_imag"), py::arg("size_parameter"), py::arg("angles"),
@@ -188,7 +197,7 @@ PYBIND11_MODULE(lxmie, m)
             all_s1[i].resize(angles.size());
             all_s2[i].resize(angles.size());
             results[i] = lxmie::Mie(
-              cd(n_real[i], n_imag[i]), size_params[i], angles, all_s1[i], all_s2[i]);
+              refractiveIndex(n_real[i], n_imag[i]), size_params[i], angles, all_s1[i], all_s2[i]);
           }
           catch (const std::runtime_error& e)
           {

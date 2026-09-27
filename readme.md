@@ -134,6 +134,8 @@ pip install .
 
 All functions are in the `lxmie` module. The refractive index is always passed as **separate real and imaginary parts** (`n_real`, `n_imag`).
 
+The sign of `n_imag` does not matter: LX-MIE internally uses the convention m = n - ik, so the imaginary part is always converted to a negative value. Both positive and negative values of `k` (e.g. taken directly from the files in `compilation/`) therefore give the same, physically correct result.
+
 Every function accepts either scalar arguments (single particle) or equal-length lists (batch of particles). List inputs trigger an OpenMP-parallel loop internally, with the GIL released during computation.
 
 ---
