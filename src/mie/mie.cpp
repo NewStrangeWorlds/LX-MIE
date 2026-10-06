@@ -466,11 +466,15 @@ std::size_t numberOfMieTerms(
 
 //Internal helper: allocate coefficients, run the core calculation, and return a MieResult.
 static MieResult calcMie(
-  const std::complex<double> m, 
+  const std::complex<double> refractive_index, 
   const double x,
   std::vector<std::complex<double>>& a,
   std::vector<std::complex<double>>& b)
 {
+  //LX-MIE uses the convention m = n - ik, i.e. a negative imaginary part
+  //The sign is enforced here, such that either convention (n + ik or n - ik) can be passed
+  const std::complex<double> m(refractive_index.real(), -std::abs(refractive_index.imag()));
+
   const std::size_t N = numberOfMieTerms(x);
   // No zeroing needed: every element [1..N] is explicitly written by calcMieCoefficients.
   a.resize(N + 1);

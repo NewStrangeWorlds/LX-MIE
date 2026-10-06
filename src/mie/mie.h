@@ -37,6 +37,8 @@ struct MieResult {
 };
 
 
+//The sign of the imaginary part of the refractive index does not matter
+//Internally, LX-MIE always uses m = n - ik, either convention (n + ik or n - ik) can be passed
 MieResult Mie(
   std::complex<double> refractive_index, 
   double size_parameter);
