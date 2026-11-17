@@ -4,7 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "lxmie"
-version = "1.1.1"
+version = "1.2"
 description = "LX-MIE: Mie scattering for arbitrarily large size parameters"
 requires-python = ">=3.8"
 
