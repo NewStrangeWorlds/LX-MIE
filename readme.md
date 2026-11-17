@@ -367,4 +367,4 @@ for wl, r in zip(wavelengths, results):
 
 ## License
 
-LX-MIE is free software distributed under the [GNU General Public License v3](licence.md).
+LX-MIE is free software distributed under the [GNU General Public License v3](licence.md). 
