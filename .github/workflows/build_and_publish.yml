@@ -57,7 +57,7 @@ jobs:
           path: dist/*.tar.gz
 
   # ---------------------------------------------------------------------------
-  # Upload to PyPI
+  # Upload to PyPI.
   #
   # Requires a "pypi" environment configured in the repository settings and a
   # trusted publisher set up on PyPI (https://pypi.org/manage/account/publishing/)
