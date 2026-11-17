@@ -1,0 +1,671 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="Refractive index compilation" href="refractive_indices.html"><link rel="prev" title="Theory and numerical method" href="theory.html">
+
+    <!-- Generated with Sphinx 8.1.3 and Furo 2025.12.19 -->
+        <title>Particle size distributions - LX-MIE 1.2</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=164320b4" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">LX-MIE 1.2</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <span class="sidebar-brand-text">LX-MIE 1.2</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../conventions.html">Conventions and units</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python package</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../python/index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python/examples.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Command-line tool</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">Running LX-MIE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/parameter_file.html">Input files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/output_files.html">Output files</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">C++ library</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../cpp/index.html">Using the library</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cpp/api.html">API reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Background</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="theory.html">Theory and numerical method</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Particle size distributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="refractive_indices.html">Refractive index compilation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="performance.html">Performance and parallelisation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">About</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting.html">Troubleshooting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../citing.html">Citing LX-MIE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="https://github.com/newstrangeworlds/lx-mie/blob/doc/docs_src/background/size_distributions.rst?plain=true" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/newstrangeworlds/lx-mie/edit/doc/docs_src/background/size_distributions.rst" rel="edit" title="Edit this page">
+    <svg><use href="#svg-pencil"></use></svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="particle-size-distributions">
+<h1>Particle size distributions<a class="headerlink" href="#particle-size-distributions" title="Link to this heading">¶</a></h1>
+<p>In most applications, particles are not of a single size, but follow a size
+distribution <span class="math notranslate nohighlight">\(n(r) = \mathrm{d}N / \mathrm{d}r\)</span>, where
+<span class="math notranslate nohighlight">\(n(r) \, \mathrm{d}r\)</span> is the number of particles with radii between
+<span class="math notranslate nohighlight">\(r\)</span> and <span class="math notranslate nohighlight">\(r + \mathrm{d}r\)</span>. LX-MIE can integrate all optical
+properties over such a distribution. This page describes the available
+distributions, the calculated quantities, and the numerical integration. The
+corresponding interfaces are documented in</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../python/api.html"><span class="doc">API reference</span></a> for the Python package,</p></li>
+<li><p><a class="reference internal" href="../cli/parameter_file.html#cli-size-distributions"><span class="std std-ref">Particle size distributions</span></a> for the command-line tool,</p></li>
+<li><p><a class="reference internal" href="../cpp/api.html"><span class="doc">API reference</span></a> for the C++ library.</p></li>
+</ul>
+<section id="size-integrated-quantities">
+<span id="id1"></span><h2>Size-integrated quantities<a class="headerlink" href="#size-integrated-quantities" title="Link to this heading">¶</a></h2>
+<p>In the following, angle brackets denote the average over the size
+distribution,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\langle f \rangle = \frac{\int f(r) \, n(r) \, \mathrm{d}r}{\int n(r) \, \mathrm{d}r} \ .\]</div>
+</div>
+<p>For a size distribution, LX-MIE calculates:</p>
+<p><strong>Mean cross sections per particle</strong></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\langle C \rangle = \frac{\int C(r) \, n(r) \, \mathrm{d}r}{\int n(r) \, \mathrm{d}r} \ ,
+\qquad C(r) = Q(r) \, \pi r^2 \ ,\]</div>
+</div>
+<p>for extinction, scattering, and absorption.</p>
+<p><strong>Mean geometric cross section and effective radius</strong></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\langle G \rangle = \langle \pi r^2 \rangle \ , \qquad
+r_\mathrm{eff} = \frac{\langle r^3 \rangle}{\langle r^2 \rangle} \ .\]</div>
+</div>
+<p><strong>Effective efficiencies</strong></p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[Q_\mathrm{eff} = \frac{\langle C \rangle}{\langle \pi r^2 \rangle} \ .\]</div>
+</div>
+<p><strong>Asymmetry parameter, phase function, and Legendre coefficients.</strong> These
+quantities are averaged with the scattering cross sections as weights, e.g.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[g = \frac{\int g(r) \, C_\mathrm{sca}(r) \, n(r) \, \mathrm{d}r}
+         {\int C_\mathrm{sca}(r) \, n(r) \, \mathrm{d}r} \ ,
+\qquad
+p(\mu) = \frac{\int p(\mu, r) \, C_\mathrm{sca}(r) \, n(r) \, \mathrm{d}r}
+              {\int C_\mathrm{sca}(r) \, n(r) \, \mathrm{d}r} \ .\]</div>
+</div>
+<p>The size-averaged phase function and its Legendre series have the same
+normalisation as those of a single particle (see <a class="reference internal" href="../conventions.html"><span class="doc">Conventions and units</span></a>). In
+particular, the second Legendre coefficient is equal to the asymmetry
+parameter of the distribution.</p>
+<p>Since all quantities are ratios of integrals over the distribution, the
+<strong>normalisation of</strong> <span class="math notranslate nohighlight">\(n(r)\)</span> <strong>is irrelevant</strong>.</p>
+<section id="from-mean-cross-sections-to-opacities">
+<h3>From mean cross sections to opacities<a class="headerlink" href="#from-mean-cross-sections-to-opacities" title="Link to this heading">¶</a></h3>
+<p>Multiplying the mean cross sections by the total number density
+<span class="math notranslate nohighlight">\(N_\mathrm{tot}\)</span> of the particles yields the extinction, scattering,
+and absorption coefficients,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\kappa_\mathrm{ext} = N_\mathrm{tot} \, \langle C_\mathrm{ext} \rangle \ .\]</div>
+</div>
+<p>The single scattering albedo of the distribution is
+<span class="math notranslate nohighlight">\(\omega_0 = \langle C_\mathrm{sca} \rangle / \langle C_\mathrm{ext} \rangle\)</span>.</p>
+</section>
+</section>
+<section id="available-distributions">
+<h2>Available distributions<a class="headerlink" href="#available-distributions" title="Link to this heading">¶</a></h2>
+<figure class="only-light align-default" id="id3">
+<a class="reference internal image-reference" href="../_images/size_distributions_light.png"><img alt="The analytical size distributions of LX-MIE" src="../_images/size_distributions_light.png" style="width: 85%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Examples of the three analytical size distributions, shown as the number
+of particles per logarithmic radius interval. The curves cover the radius
+ranges that are chosen automatically by LX-MIE.</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="only-dark align-default" id="id4">
+<a class="reference internal image-reference" href="../_images/size_distributions_dark.png"><img alt="The analytical size distributions of LX-MIE" src="../_images/size_distributions_dark.png" style="width: 85%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Examples of the three analytical size distributions, shown as the number
+of particles per logarithmic radius interval. The curves cover the radius
+ranges that are chosen automatically by LX-MIE.</span><a class="headerlink" href="#id4" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<section id="log-normal-distribution">
+<h3>Log-normal distribution<a class="headerlink" href="#log-normal-distribution" title="Link to this heading">¶</a></h3>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[n(r) \propto \frac{1}{r} \exp \left( - \frac{\ln^2 (r / r_m)}{2 \ln^2 \sigma_g} \right)\]</div>
+</div>
+<p>The parameters are the median radius <span class="math notranslate nohighlight">\(r_m\)</span> and the geometric standard
+deviation <span class="math notranslate nohighlight">\(\sigma_g &gt; 1\)</span>. The effective radius of the distribution is</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[r_\mathrm{eff} = r_m \exp \left( \frac{5}{2} \ln^2 \sigma_g \right) \ .\]</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The width of a log-normal distribution is sometimes also specified by
+<span class="math notranslate nohighlight">\(\sigma = \ln \sigma_g\)</span>. LX-MIE expects the geometric standard
+deviation <span class="math notranslate nohighlight">\(\sigma_g = \mathrm{e}^{\sigma}\)</span>, which is always larger
+than one.</p>
+</div>
+</section>
+<section id="gamma-distribution">
+<h3>Gamma distribution<a class="headerlink" href="#gamma-distribution" title="Link to this heading">¶</a></h3>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[n(r) \propto r^{(1-3b)/b} \exp \left( - \frac{r}{ab} \right)\]</div>
+</div>
+<p>This is the gamma distribution in the form of Hansen &amp; Travis <a class="reference internal" href="#ht74" id="id2"><span>[HT74]</span></a>. Its
+two parameters directly correspond to the effective radius
+<span class="math notranslate nohighlight">\(a = r_\mathrm{eff}\)</span> and the effective variance
+<span class="math notranslate nohighlight">\(b = v_\mathrm{eff}\)</span> of the distribution, with <span class="math notranslate nohighlight">\(0 &lt; b &lt; 0.5\)</span>.</p>
+</section>
+<section id="power-law">
+<h3>Power law<a class="headerlink" href="#power-law" title="Link to this heading">¶</a></h3>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[n(r) \propto r^{-p} \ , \qquad r_\mathrm{min} \leq r \leq r_\mathrm{max}\]</div>
+</div>
+<p>The parameters are the smallest and largest radius, and the exponent
+<span class="math notranslate nohighlight">\(p\)</span>. A well-known example is the size distribution of interstellar
+dust grains by Mathis, Rumpl &amp; Nordsieck (1977) with <span class="math notranslate nohighlight">\(p = 3.5\)</span>.</p>
+</section>
+<section id="tabulated-distribution">
+<h3>Tabulated distribution<a class="headerlink" href="#tabulated-distribution" title="Link to this heading">¶</a></h3>
+<p>An arbitrary distribution can be given by the values of
+<span class="math notranslate nohighlight">\(n(r) = \mathrm{d}N/\mathrm{d}r\)</span> at a set of strictly increasing radii.
+Between the tabulated radii, the integrands are assumed to be linear, i.e.
+the distribution is integrated with the trapezoidal rule. The table therefore
+has to resolve the distribution sufficiently well.</p>
+</section>
+<section id="discrete-size-bins">
+<h3>Discrete size bins<a class="headerlink" href="#discrete-size-bins" title="Link to this heading">¶</a></h3>
+<p>In the Python package and the C++ library, a distribution can also be defined
+directly by a list of radii and the number of particles for each radius. This
+is the appropriate choice for the discrete size bins of a cloud or haze
+model. In this case, the integrals above turn into sums over the bins,</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\langle C \rangle = \frac{\sum_i w_i \, C(r_i)}{\sum_i w_i} \ ,\]</div>
+</div>
+<p>with the particle numbers (or number densities) <span class="math notranslate nohighlight">\(w_i\)</span>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The weights of discrete size bins are particle <em>numbers</em>, whereas a
+tabulated distribution contains the values of the <em>density</em>
+<span class="math notranslate nohighlight">\(\mathrm{d}N/\mathrm{d}r\)</span>. Using particle numbers per bin as a
+tabulated distribution gives incorrect results if the bins do not all
+have the same width.</p>
+</div>
+</section>
+</section>
+<section id="numerical-integration">
+<h2>Numerical integration<a class="headerlink" href="#numerical-integration" title="Link to this heading">¶</a></h2>
+<p>Internally, every size distribution is represented by a set of radii
+<span class="math notranslate nohighlight">\(r_i\)</span> and weights <span class="math notranslate nohighlight">\(w_i = n(r_i) \, \Delta r_i\)</span>. One Mie
+calculation is performed for each radius, and the integrals over the
+distribution are replaced by sums.</p>
+<section id="radius-grid">
+<h3>Radius grid<a class="headerlink" href="#radius-grid" title="Link to this heading">¶</a></h3>
+<p>For the three analytical distributions, the radii are distributed
+equidistantly in <span class="math notranslate nohighlight">\(\ln r\)</span> and the integrals are evaluated with the
+trapezoidal rule. The number of radii is 500 by default and can be changed
+by the user.</p>
+</section>
+<section id="integration-limits">
+<h3>Integration limits<a class="headerlink" href="#integration-limits" title="Link to this heading">¶</a></h3>
+<p>The log-normal and the gamma distribution formally extend from zero to
+infinity. Their integration limits are chosen automatically, such that they
+cover</p>
+<ul class="simple">
+<li><p>the distribution itself, which is required for its normalisation, and</p></li>
+<li><p>the distribution weighted with <span class="math notranslate nohighlight">\(r^6\)</span>. This is the steepest possible
+size dependence of a cross section (scattering in the Rayleigh limit) and
+ensures that the contribution of the large particles is included.</p></li>
+</ul>
+<p>For the log-normal distribution, the grid extends from</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[r_m \exp \left( - 6 \ln \sigma_g \right)
+\qquad \text{to} \qquad
+r_m \exp \left( 6 \ln^2 \sigma_g + 6 \ln \sigma_g \right) \ ,\]</div>
+</div>
+<p>i.e. from six standard deviations below the median of <span class="math notranslate nohighlight">\(n(r)\)</span> to six
+standard deviations above the maximum of <span class="math notranslate nohighlight">\(r^6 n(r)\)</span>. For the gamma
+distribution, the lower limit is chosen such that the neglected fraction of
+the total particle number is about <span class="math notranslate nohighlight">\(10^{-8}\)</span>. The upper limit is
+located far in the exponential tail of <span class="math notranslate nohighlight">\(r^6 n(r)\)</span>.</p>
+<div class="table-wrapper colwidths-given docutils container" id="id5">
+<table class="docutils align-default" id="id5">
+<caption><span class="caption-text">Examples of the automatic integration limits</span><a class="headerlink" href="#id5" title="Link to this table">¶</a></caption>
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Distribution</p></th>
+<th class="head"><p>Smallest radius</p></th>
+<th class="head"><p>Largest radius</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Log-normal, <span class="math notranslate nohighlight">\(r_m = 1\)</span>, <span class="math notranslate nohighlight">\(\sigma_g = 1.5\)</span></p></td>
+<td><p>0.088</p></td>
+<td><p>30.5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Gamma, <span class="math notranslate nohighlight">\(r_\mathrm{eff} = 1\)</span>, <span class="math notranslate nohighlight">\(v_\mathrm{eff} = 0.1\)</span></p></td>
+<td><p>0.038</p></td>
+<td><p>7.04</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>In the Python package and the C++ library, the limits can be set explicitly
+with the parameters <code class="docutils literal notranslate"><span class="pre">r_min</span></code> and <code class="docutils literal notranslate"><span class="pre">r_max</span></code>. This truncates the distribution
+at these radii.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Due to the weighting with <span class="math notranslate nohighlight">\(r^6\)</span>, the upper limit of a broad
+log-normal distribution can be very large. For <span class="math notranslate nohighlight">\(\sigma_g = 3\)</span>, for
+example, it is about <span class="math notranslate nohighlight">\(10^6 \, r_m\)</span>. Since the computing time of a
+Mie calculation increases with the particle size, calculations for very
+broad distributions at short wavelengths can take considerably longer. If
+the large particles are known to be irrelevant, the distribution can be
+truncated with <code class="docutils literal notranslate"><span class="pre">r_max</span></code>.</p>
+</div>
+</section>
+<section id="accuracy">
+<h3>Accuracy<a class="headerlink" href="#accuracy" title="Link to this heading">¶</a></h3>
+<p>The Mie efficiencies of weakly absorbing particles oscillate rapidly as a
+function of the particle size (see the figure on the <a class="reference internal" href="../index.html"><span class="doc">start page</span></a>). The integration over the size distribution has to resolve these
+oscillations. The accuracy therefore depends on the number of radii, the
+width of the distribution, the ratio of the particle sizes to the
+wavelength, and the absorption of the material.</p>
+<p>The following table shows the relative errors of the mean extinction cross
+section for a log-normal distribution with <span class="math notranslate nohighlight">\(r_m = 1\)</span>, <span class="math notranslate nohighlight">\(\sigma_g
+= 1.5\)</span>, and a real part of the refractive index of 1.5 at a wavelength of
+0.55, as a function of the number of radii:</p>
+<div class="table-wrapper colwidths-given docutils container">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28.0%" />
+<col style="width: 36.0%" />
+<col style="width: 36.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Number of radii</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(k = 0\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(k = 0.01\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>100</p></td>
+<td><p><span class="math notranslate nohighlight">\(1 \times 10^{-2}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(4 \times 10^{-3}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>500 (default)</p></td>
+<td><p><span class="math notranslate nohighlight">\(2 \times 10^{-3}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(9 \times 10^{-5}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>2000</p></td>
+<td><p><span class="math notranslate nohighlight">\(3 \times 10^{-4}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(&lt; 10^{-9}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>10000</p></td>
+<td><p><span class="math notranslate nohighlight">\(7 \times 10^{-5}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(&lt; 10^{-9}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>As a rule of thumb, the size-integrated quantities are accurate to about
+<span class="math notranslate nohighlight">\(10^{-4}\)</span> – <span class="math notranslate nohighlight">\(10^{-3}\)</span> with the default number of 500 radii. The
+largest errors occur for non-absorbing particles that are large compared to
+the wavelength. Absorption damps the oscillations and strongly improves the
+convergence. For higher accuracy or very broad distributions, the number of
+radii can be increased. The computing time is proportional to the number of
+radii.</p>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<div role="list" class="citation-list">
+<div class="citation" id="ht74" role="doc-biblioentry">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">HT74</a><span class="fn-bracket">]</span></span>
+<p>Hansen, J. E. &amp; Travis, L. D. (1974), <em>Light scattering in
+planetary atmospheres</em>, Space Science Reviews 16, 527–610</p>
+</div>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="refractive_indices.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Refractive index compilation</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="theory.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Theory and numerical method</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Daniel Kitzmann
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link " href="https://github.com/newstrangeworlds/lx-mie" aria-label="GitHub">
+                <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+            </a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Particle size distributions</a><ul>
+<li><a class="reference internal" href="#size-integrated-quantities">Size-integrated quantities</a><ul>
+<li><a class="reference internal" href="#from-mean-cross-sections-to-opacities">From mean cross sections to opacities</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#available-distributions">Available distributions</a><ul>
+<li><a class="reference internal" href="#log-normal-distribution">Log-normal distribution</a></li>
+<li><a class="reference internal" href="#gamma-distribution">Gamma distribution</a></li>
+<li><a class="reference internal" href="#power-law">Power law</a></li>
+<li><a class="reference internal" href="#tabulated-distribution">Tabulated distribution</a></li>
+<li><a class="reference internal" href="#discrete-size-bins">Discrete size bins</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numerical-integration">Numerical integration</a><ul>
+<li><a class="reference internal" href="#radius-grid">Radius grid</a></li>
+<li><a class="reference internal" href="#integration-limits">Integration limits</a></li>
+<li><a class="reference internal" href="#accuracy">Accuracy</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5f474de7"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=46bd48cc"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    </body>
+</html>
