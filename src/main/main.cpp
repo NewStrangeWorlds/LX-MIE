@@ -20,6 +20,7 @@
 
 
 #include "../mie/mie.h"
+#include "../mie/size_distribution.h"
 
 #include <vector>
 #include <iostream>
@@ -51,7 +52,9 @@ int main(int argc, char *argv[])
 
   std::string refractive_index_file;
   std::string output_file;
-  double particle_radius;
+  double particle_radius = 0;
+  bool use_size_distribution = false;
+  lxmie::SizeDistribution size_distribution;
   bool use_cross_sections = true;
   bool compute_phase_function = false;
   bool use_legendre_series = false;
@@ -66,6 +69,8 @@ int main(int argc, char *argv[])
     refractive_index_file,
     output_file,
     particle_radius,
+    use_size_distribution,
+    size_distribution,
     use_cross_sections,
     compute_phase_function,
     use_legendre_series,
@@ -93,109 +98,99 @@ int main(int argc, char *argv[])
   std::vector< std::vector<double> > phase_function;
   phase_function.resize(nb_wavelengths);
 
+  //Radius used for the size parameter and the geometric cross section (in micron^2)
+  //For a size distribution, these are the effective radius and the mean geometric cross section
+  double output_radius = particle_radius;
+  double geometric_cross_section = CONST_PI * particle_radius * particle_radius;
+
   // Shared error state for OpenMP loops — written under critical, read after join.
   std::atomic<bool> error_flag{false};
   std::string error_message;
 
-  if (!compute_phase_function)
+  #pragma omp parallel for schedule(dynamic)
+  for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(nb_wavelengths); ++i)
   {
-    #pragma omp parallel for schedule(dynamic)
-    for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(nb_wavelengths); ++i)
+    if (error_flag) continue;
+    try
     {
-      if (error_flag) continue;
-      try
+      if (use_size_distribution)
       {
-        const double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
-        auto r = lxmie::Mie(refractive_index[i], size_parameter);
+        //optical properties integrated over the size distribution
+        //q_ext, q_scat, and q_abs are the effective efficiencies of the distribution
+        lxmie::MieDistributionResult r{};
+
+        if (!compute_phase_function)
+          r = lxmie::MieDistribution(
+            refractive_index[i],
+            wavelengths[i],
+            size_distribution);
+        else if (use_legendre_series)
+          r = lxmie::MieDistribution(
+            refractive_index[i],
+            wavelengths[i],
+            size_distribution,
+            nb_legendre_terms,
+            phase_function[i]);
+        else
+          r = lxmie::MieDistribution(
+            refractive_index[i],
+            wavelengths[i],
+            size_distribution,
+            phase_function_angles,
+            phase_function[i]);
+
         q_ext[i] = r.q_ext;
         q_scat[i] = r.q_sca;
         q_abs[i] = r.q_abs;
         asymmetry_parameter[i] = r.asymmetry_parameter;
-      }
-      catch (const std::runtime_error& e)
-      {
-        #pragma omp critical
-        { error_flag = true; error_message = e.what(); }
-      }
-    }
-  }
 
-  if (compute_phase_function)
-  {
-    if (use_legendre_series)
-    {
-      #pragma omp parallel for schedule(dynamic)
-      for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(nb_wavelengths); ++i)
-      {
-        if (error_flag) continue;
-        try
+        if (i == 0)
         {
-          const double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
+          output_radius = r.effective_radius;
+          geometric_cross_section = r.geometric_cross_section;
+        }
+      }
+      else
+      {
+        const double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
+        lxmie::MieResult r{};
+
+        if (!compute_phase_function)
+          r = lxmie::Mie(refractive_index[i], size_parameter);
+        else if (use_legendre_series)
+        {
           phase_function[i].assign(nb_legendre_terms, 0);
-          auto r = lxmie::Mie(
+          r = lxmie::Mie(
             refractive_index[i],
             size_parameter,
             nb_legendre_terms,
             phase_function[i]);
-          q_ext[i] = r.q_ext;
-          q_scat[i] = r.q_sca;
-          q_abs[i] = r.q_abs;
-          asymmetry_parameter[i] = r.asymmetry_parameter;
         }
-        catch (const std::runtime_error& e)
+        else
         {
-          #pragma omp critical
-          { error_flag = true; error_message = e.what(); }
-        }
-      }
-
-      if (!error_flag)
-        writeLegendreSeriesOutput(
-          phase_function_output_file,
-          wavelengths,
-          phase_function);
-    }
-    else
-    {
-      #pragma omp parallel for schedule(dynamic)
-      for (std::ptrdiff_t i = 0; i < static_cast<std::ptrdiff_t>(nb_wavelengths); ++i)
-      {
-        if (error_flag) continue;
-        try
-        {
-          const double size_parameter = 2.0 * CONST_PI * particle_radius / wavelengths[i];
-          phase_function[i].assign(phase_function_angles.size(), 0);
-
           std::vector< std::complex<double> > s1(phase_function_angles.size(), std::complex<double>(0, 0));
           std::vector< std::complex<double> > s2(phase_function_angles.size(), std::complex<double>(0, 0));
 
-          auto r = lxmie::Mie(
+          r = lxmie::Mie(
             refractive_index[i],
             size_parameter,
             phase_function_angles,
             s1,
             s2);
 
-          q_ext[i] = r.q_ext;
-          q_scat[i] = r.q_sca;
-          q_abs[i] = r.q_abs;
-          asymmetry_parameter[i] = r.asymmetry_parameter;
+          phase_function[i] = lxmie::phaseFunction(s1, s2, size_parameter, r.q_sca);
+        }
 
-          phase_function[i] = lxmie::phaseFunction(s1, s2, size_parameter, q_scat[i]);
-        }
-        catch (const std::runtime_error& e)
-        {
-          #pragma omp critical
-          { error_flag = true; error_message = e.what(); }
-        }
+        q_ext[i] = r.q_ext;
+        q_scat[i] = r.q_sca;
+        q_abs[i] = r.q_abs;
+        asymmetry_parameter[i] = r.asymmetry_parameter;
       }
-
-      if (!error_flag)
-        writePhaseFunctionOutput(
-          phase_function_output_file,
-          wavelengths,
-          phase_function_angles,
-          phase_function);
+    }
+    catch (const std::exception& e)
+    {
+      #pragma omp critical
+      { error_flag = true; error_message = e.what(); }
     }
   }
 
@@ -206,10 +201,26 @@ int main(int argc, char *argv[])
   }
 
 
+  if (compute_phase_function)
+  {
+    if (use_legendre_series)
+      writeLegendreSeriesOutput(
+        phase_function_output_file,
+        wavelengths,
+        phase_function);
+    else
+      writePhaseFunctionOutput(
+        phase_function_output_file,
+        wavelengths,
+        phase_function_angles,
+        phase_function);
+  }
+
   writeOutputFile(
     output_file,
     use_cross_sections,
-    particle_radius,
+    output_radius,
+    geometric_cross_section,
     wavelengths,
     q_ext,
     q_abs,

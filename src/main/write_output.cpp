@@ -32,10 +32,15 @@
 
 
 //write results
+//particle_radius (in micron) is used to calculate the size parameter, 
+//geometric_cross_section (in micron^2) to convert the efficiencies into cross sections
+//For a size distribution, these are the effective radius and the mean geometric 
+//cross section, respectively
 void writeOutputFile(
   const std::string file_name, 
   const bool use_cross_sections, 
   const double particle_radius,
+  const double geometric_cross_section,
   const std::vector<double>& wavelengths,
   const std::vector<double>& q_ext, 
   const std::vector<double>& q_abs,
@@ -58,7 +63,7 @@ void writeOutputFile(
 
   if (use_cross_sections)
   {
-    double radius = particle_radius *1e-4; //convert from micron to cm to calculate cross section in cm2
+    const double cross_section = geometric_cross_section * 1e-8; //convert from micron2 to cm2
 
     file << std::setw(16) << std::left << "#wavelengths (mu)" << "\t"
          << std::setw(16) << std::left << "size parameter" << "\t"
@@ -71,9 +76,9 @@ void writeOutputFile(
     for (size_t i=0; i<nb_wavelengths; i++)
       file << std::setw(16) << std::left << std::setprecision(10) << std::scientific << wavelengths[i] << "\t"
            << std::setw(16) << std::left << 2.0 * CONST_PI * particle_radius / wavelengths[i] << "\t"
-           << std::setw(33) << std::left << q_ext[i]*CONST_PI*radius*radius<< "\t"
-           << std::setw(33) << std::left << q_scat[i]*CONST_PI*radius*radius << "\t"
-           << std::setw(33) << std::left << q_abs[i]*CONST_PI*radius*radius << "\t"
+           << std::setw(33) << std::left << q_ext[i]*cross_section<< "\t"
+           << std::setw(33) << std::left << q_scat[i]*cross_section << "\t"
+           << std::setw(33) << std::left << q_abs[i]*cross_section << "\t"
            << std::setw(33) << std::left << q_scat[i]/q_ext[i] << "\t"
            << std::setw(33) << std::left << asymmetry_parameter[i] << "\n";
   }

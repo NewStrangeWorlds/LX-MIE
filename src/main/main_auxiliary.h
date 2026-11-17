@@ -25,6 +25,9 @@
 #include <vector>
 #include <complex>
 #include <fstream>
+#include <string>
+
+#include "../mie/size_distribution.h"
 
 
 
@@ -36,6 +39,8 @@ bool readParameterFile(
   std::string &refractive_index_file, 
   std::string &output_file, 
   double &radius, 
+  bool& use_size_distribution,
+  lxmie::SizeDistribution& size_distribution,
   bool& use_cross_sections,
   bool& compute_phase_function, 
   bool& use_legendre_series, 
@@ -50,6 +55,16 @@ bool readPhaseFunctionParameter(
   size_t& nb_legendre_terms,
   std::string& output_file);
 
+bool readParticleSize(
+  const std::string& input, 
+  double& radius, 
+  bool& use_size_distribution,
+  lxmie::SizeDistribution& size_distribution);
+
+bool readSizeDistributionFile(
+  const std::string file_name, 
+  lxmie::SizeDistribution& size_distribution);
+
 bool readRefractiveIndex(
   const std::string file_name, 
   std::vector<double> &wavelengths, 
@@ -59,6 +74,7 @@ void writeOutputFile(
   const std::string file_name, 
   const bool use_cross_sections, 
   const double particle_radius,
+  const double geometric_cross_section,
   const std::vector<double>& wavelengths,
   const std::vector<double>& q_ext, 
   const std::vector<double>& q_abs,
